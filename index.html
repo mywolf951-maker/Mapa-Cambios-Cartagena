@@ -100,7 +100,7 @@
         lat: 37.6058,
         lon: -0.9875,
         type: 'fiat',
-        url: 'https://quickgold.es/vender-oro/compro-oro-cartagena?utm_source=gmb&utm_medium=boton&utm_content&utm_campaign=sitio-web-gmb&servicios=true'
+        url: 'https://quickgold.es/vender-oro/compro-oro-cartagena'
       },
       {
         name: 'Eurochange',
@@ -162,6 +162,9 @@
           document.getElementById('eurjpy').textContent = `EUR/JPY: ${(r.JPY / r.EUR).toFixed(2)}`;
           document.getElementById('eurcop').textContent = `EUR/COP: ${(r.COP / r.EUR).toFixed(0)}`;
           document.getElementById('eurars').textContent = `EUR/ARS: ${(r.ARS / r.EUR).toFixed(2)}`;
+        })
+        .catch(err => {
+          console.error('Error al cargar dinero.today:', err);
         });
 
       fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=eur')
@@ -170,14 +173,27 @@
           document.getElementById('btceur').textContent = `BTC/EUR: ${data.bitcoin.eur.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}`;
           document.getElementById('etheur').textContent = `ETH/EUR: ${data.ethereum.eur.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}`;
           document.getElementById('usdteur').textContent = `USDT/EUR: ${data.tether.eur.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}`;
+        })
+        .catch(err => {
+          console.error('Error al cargar CoinGecko:', err);
         });
     }
 
     updateRates();
-    setInterval(updateRates, 60000); // Actualiza cada 60 segundos
+    setInterval(updateRates, 60000);
 
     document.getElementById('locate-btn').addEventListener('click', () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
           const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup('📍 Estás aquí').openPopup();
+          map.setView([lat, lon], 15);
+        }, () => {
+          alert('No se pudo obtener tu ubicación.');
+        });
+      } else {
+        alert('Ge
+
          
